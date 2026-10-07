@@ -4,14 +4,14 @@ from sklearn.utils import shuffle
 import torch 
 from torch import nn
 import torch.nn.functional as F
-from torch.utils.data import DataLoader 
+from torch.utils.data import DataLoader, SubsetRandomSampler
 import torch.optim as optim
 from sklearn.metrics import classification_report
 import numpy as np
 
-from MyDataLoader import MyNoiseDataset
-from Bcolors import bcolors
-from M5_Network import m3, m5, m11, m18, m34_res, m6_res, m6_res_general
+from training.MyDataLoader import MyNoiseDataset
+from training.Bcolors import bcolors
+from gfanc.M5_Network import m3, m5, m11, m18, m34_res, m6_res, m6_res_general
 
 BATCH_SIZE = 250
 EPOCHS = 50
@@ -124,8 +124,7 @@ def Train_Validate_CNN(TRIAN_DATASET_FILE, VALIDATION_DATASET_FILE, MODEL_PTH, F
     train_data = MyNoiseDataset(TRIAN_DATASET_FILE,File_sheet)
     valid_data = MyNoiseDataset(VALIDATION_DATASET_FILE,File_sheet)
     
-    from torch.utils.data import SubsetRandomSampler
-    import numpy as np  
+
     # indices = np.random.choice(80000, num, replace=False)
     # sampler = SubsetRandomSampler(indices)  
     train_dataloader = create_data_loader(train_data, BATCH_SIZE)

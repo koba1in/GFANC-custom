@@ -3,7 +3,7 @@ from torch import nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from MyDataLoader import MyNoiseDataset, MyNoiseDataset1
-from M5_Network import m3, m5, m11, m18, m34_res, m6_res, m6_res_general
+from M5_Network_v2 import m3, m5, m11, m18, m34_res, m6_res, m6_res_general
 
 BATCH_SIZE = 250
 

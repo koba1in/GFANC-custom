@@ -4,7 +4,7 @@ import numpy as np
 from torch import nn
 import scipy.signal as signal
 
-from Network import m6_res
+from M5_Network import m6_res
 
 
 #-------------------------------------------------------------

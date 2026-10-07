@@ -27,3 +27,6 @@ Environment: Jupyter Notebook 6.4.5, Python 3.9.7, Pytorch 1.10.1
 - [A hybrid sfanc-fxnlms algorithm for active noise control based on deep learning](https://arxiv.org/pdf/2208.08082)
 - [Performance Evaluation of Selective Fixed-filter Active Noise Control based on Different Convolutional Neural Networks](https://arxiv.org/pdf/2208.08440)
 - If you are interested in this work, you can read and cite our papers. Thanks!
+## Project layout
+
+Runnable Jupyter notebooks are under `Hard_Label/`. Shared Python modules are organized by role under `src/data/`, `src/training/`, `src/anc/`, and `src/common/`. Notebook setup cells locate the repository root and import from `src`; data and trained artifacts remain in the repository-level `models/`, `Pz and Sz/`, and `Real Noise Examples/` directories. When two implementations differ, the retained modules use version suffixes such as `_v1` and `_v2`; byte-identical copies are consolidated. See `src/README.md` for details.

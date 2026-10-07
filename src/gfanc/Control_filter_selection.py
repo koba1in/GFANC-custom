@@ -135,7 +135,7 @@ def Control_filter_selection(fs, MODEL_PTH, path_mat, Primary_noise, threshold):
     Filter_vector = Pre_trained_control_filter_ID_pridector.predic_ID_vector(Primary_noise)
     
     return Filter_vector
-from M5_Network import m6_res_general_2, m6_res_general_3
+from M5_Network_v3 import m6_res_general_2, m6_res_general_3
 class General_Control_filter_Index_predictor():
     
     def __init__(self, MODEL_PATH, path_mat, device, fs, numclass):

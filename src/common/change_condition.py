@@ -6,14 +6,13 @@ import os
 from pathlib import Path
 
 def delay_secondary_path(folder, pri_path_file, sec_path_file, pri_path_name, sec_path_name, savefolder, delay=0):
-    folder = Path(folder)
-    savefolder = Path(savefolder)
+    folder, savefolder = Path(folder), Path(savefolder)
     pri_path = sio.loadmat(folder/pri_path_file)[pri_path_name]
     sec_path = sio.loadmat(folder/sec_path_file)[sec_path_name]
     pri_path_argmax = pri_path.argmax()
     sec_path_argmax = sec_path.argmax()
     zeros = np.zeros((pri_path_argmax - sec_path_argmax + delay, 1))
-    sec_path = np.concat([zeros, sec_path], axis=0)
+    sec_path = np.concatenate([zeros, sec_path], axis=0)
     
     sio.savemat(savefolder/pri_path_file, {pri_path_name:pri_path})
     sio.savemat(savefolder/sec_path_file, {sec_path_name:sec_path})
@@ -25,14 +24,11 @@ def add_noise_to_folder(folder, save_folder, snr):
             add_noise_to_file(folder, file, save_folder, snr)
     
 def add_noise_to_file(folder, file, save_folder, snr):
-    wave, sample_rate = torchaudio.load(folder+file)
-    wave_rms = torch.mean(torch.square(wave))
-    noise_rms = wave_rms / (10 ** (snr / 10)) 
-    std = torch.sqrt(noise_rms)
-    noise = torch.randn_like(wave) * std
-    wave = wave + noise
+    folder, save_folder = Path(folder), Path(save_folder)
+    wave, sample_rate = torchaudio.load(folder/file)
+    wave = add_noise_to_tensor(wave, snr)
     wave = torch.clamp(wave, min=-1, max=1)
-    torchaudio.save(save_folder+file, wave, sample_rate)
+    torchaudio.save(save_folder/file, wave, sample_rate)
 
 def add_noise_to_tensor(wave, snr):
     #wave: [Batch, fs*time]
@@ -41,7 +37,6 @@ def add_noise_to_tensor(wave, snr):
     std = torch.sqrt(noise_rms)
     noise = torch.randn_like(wave) * std
     wave = wave + noise
-    wave = torch.clamp(wave, min=-1, max=1)
     return wave
 
 def add_noise_to_ndarray(wave, snr):
