@@ -1,11 +1,9 @@
-import os 
-import pandas as pd
-import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
-from scipy import signal, misc
-import scipy.io as sio
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import scipy.io as sio
+
 
 def loading_paths(folder="Duct_path", Pri_path_file_name = "Primary Path.csv", Sec_path_file_name="Secondary Path.csv"):
     Primay_path_file, Secondary_path_file = Path(folder)/Pri_path_file_name, Path(folder)/Sec_path_file_name

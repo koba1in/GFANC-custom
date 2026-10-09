@@ -3,7 +3,7 @@
 import torch
 
 
-class Fixed_filter_controller():
+class Fixed_filter_controller:
     def __init__(self, Filter_vector, fs):
         self.Filter_vector = torch.from_numpy(Filter_vector).type(torch.float)# torch.Size([Xseconds, 1024])
         Len = self.Filter_vector.shape[1]

@@ -1,9 +1,11 @@
-import scipy.io as sio
-import numpy as np
-import torchaudio
-import torch
 import os
 from pathlib import Path
+
+import numpy as np
+import scipy.io as sio
+import torch
+import torchaudio
+
 
 def delay_secondary_path(folder, pri_path_file, sec_path_file, pri_path_name, sec_path_name, savefolder, delay=0):
     folder, savefolder = Path(folder), Path(savefolder)

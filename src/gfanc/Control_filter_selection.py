@@ -1,11 +1,9 @@
-import torch
-import os
-import numpy as np
-from torch import nn
-import scipy.signal as signal
-import scipy.io as sio
 
-from M5_Network import m6_res
+import numpy as np
+import scipy.io as sio
+import torch
+from gfanc.M5_Network import m6_res
+from scipy import signal
 
 
 #-------------------------------------------------------------
@@ -78,7 +76,7 @@ def Generating_boardband_noise_wavefrom_tensor(Wc_F, Seconds, fs):
 #-------------------------------------------------------------
 # Class : Control_filter_Index_predictor
 #-------------------------------------------------------------
-class Control_filter_Index_predictor():
+class Control_filter_Index_predictor:
     
     def __init__(self, MODEL_PATH, path_mat, device, fs, threshold):
         model = m6_res
@@ -135,8 +133,10 @@ def Control_filter_selection(fs, MODEL_PTH, path_mat, Primary_noise, threshold):
     Filter_vector = Pre_trained_control_filter_ID_pridector.predic_ID_vector(Primary_noise)
     
     return Filter_vector
-from M5_Network_v3 import m6_res_general_2, m6_res_general_3
-class General_Control_filter_Index_predictor():
+from gfanc.M5_Network import m6_res_general_2, m6_res_general_3
+
+
+class General_Control_filter_Index_predictor:
     
     def __init__(self, MODEL_PATH, path_mat, device, fs, numclass):
         if numclass == 2:

@@ -1,14 +1,14 @@
-import torch
-import numpy as np 
-import torch.nn as nn
-import torch.optim as optim
-import scipy.signal as signal
+import numpy as np
 import progressbar
+import torch
+from scipy import signal
+from torch import optim
+
 
 #------------------------------------------------------------------------------
 # Class: FxLMS algorithm
 #------------------------------------------------------------------------------
-class FxLMS():
+class FxLMS:
     
     def __init__(self, Len):
         self.Wc = torch.zeros(1, Len, requires_grad=True, dtype=torch.float) # initial coefficients of filter
@@ -76,7 +76,7 @@ def Generating_boardband_noise_wavefrom_tensor(Wc_F, Seconds, fs):
     # return a tensor of [1 x sample rate]
     return torch.from_numpy(yout).type(torch.float).unsqueeze(0)
 
-class SuperFastLMS():
+class SuperFastLMS:
     def __init__(self, Len):
         self.Len = Len
         self.Wc = np.zeros(Len, dtype=np.float64)  
@@ -133,7 +133,6 @@ def train_fast_lms_algorithm(Model, Ref, Disturbance, Stepsize=0.00000005):
         
     return Erro_signal.tolist()
 
-import numpy as np
 
 
 class SuperFastFxNLMS:

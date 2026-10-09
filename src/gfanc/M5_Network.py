@@ -1,10 +1,11 @@
 import torch
 
+
 class CNN(torch.nn.Module):
     
     def __init__(self, channels, conv_kernels, conv_strides, conv_padding, pool_padding, num_classes=15):
         assert len(conv_kernels) == len(channels) == len(conv_strides) == len(conv_padding)
-        super(CNN, self).__init__()
+        super().__init__()
         
         # create conv blocks
         self.conv_blocks = torch.nn.ModuleList()
@@ -49,7 +50,7 @@ class CNN(torch.nn.Module):
 class ResBlock(torch.nn.Module):
     
     def __init__(self, prev_channel, channel, conv_kernel, conv_stride, conv_pad):
-        super(ResBlock, self).__init__()
+        super().__init__()
         self.res = torch.nn.Sequential(
             torch.nn.Conv1d(in_channels = prev_channel, out_channels=channel, kernel_size=conv_kernel, stride=conv_stride, padding=conv_pad),
             torch.nn.BatchNorm1d(channel),
@@ -85,7 +86,7 @@ class CNNRes(torch.nn.Module):
         
     def __init__(self, channels, conv_kernels, conv_strides, conv_padding, pool_padding, num_classes=15):
         assert len(conv_kernels) == len(channels) == len(conv_strides) == len(conv_padding)
-        super(CNNRes, self).__init__()
+        super().__init__()
         
         # create conv block
         prev_channel = 1
@@ -176,7 +177,7 @@ class CNNResGen(torch.nn.Module):
         
     def __init__(self, channels, conv_kernels, conv_strides, conv_padding, pool_padding, num_classes=15, gen=2):
         assert len(conv_kernels) == len(channels) == len(conv_strides) == len(conv_padding)
-        super(CNNResGen, self).__init__()
+        super().__init__()
         
         # create conv block
         prev_channel = 1

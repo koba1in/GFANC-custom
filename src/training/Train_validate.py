@@ -1,19 +1,14 @@
-from os import write
 import os
-from sklearn.utils import shuffle
-import torch 
-from torch import nn
-import torch.nn.functional as F
-from torch.utils.data import DataLoader, SubsetRandomSampler
-import torch.optim as optim
-from sklearn.metrics import classification_report
-import numpy as np
 
-from training.MyDataLoader import MyNoiseDataset
+import torch
+from torch import nn, optim
+from torch.utils.data import DataLoader
+
+from gfanc.M5_Network import m6_res, m6_res_general_2
 from training.Bcolors import bcolors
-from gfanc.M5_Network import m3, m5, m11, m18, m34_res, m6_res, m6_res_general
+from training.MyDataLoader import MyNoiseDataset
 
-BATCH_SIZE = 250
+# BATCH_SIZE = 250
 EPOCHS = 50
 
 # using uniform distribution for weight initialization
@@ -104,7 +99,7 @@ def train(model, data_loader, eva_data_loader, epochs, device, MODEL_PTH=None):
 #----------------------------------------------------------------------------------------
 # Function : Training and validating 1D-CNN
 #----------------------------------------------------------------------------------------
-def Train_Validate_CNN(TRIAN_DATASET_FILE, VALIDATION_DATASET_FILE, MODEL_PTH, File_sheet, num=None, numclass=None):
+def Train_Validate_CNN(TRIAN_DATASET_FILE, VALIDATION_DATASET_FILE, MODEL_PTH, File_sheet, BATCH_SIZE=250, num=None, numclass=None):
     # if numclass is not None:
     #     File_sheet = File_sheet + "_" + str(numclass)
     #     MODEL_PTH = MODEL_PTH + "_" + str(numclass)
@@ -171,7 +166,9 @@ def general_train(model, data_loader, eva_data_loader, epochs, device, MODEL_PTH
 #----------------------------------------------------------------------------------------
 # Function : Training and validating 1D-CNN
 #----------------------------------------------------------------------------------------
-from MyDataLoader import GenMyNoiseDataset
+from training.MyDataLoader import GenMyNoiseDataset
+
+
 def General_Train_Validate_CNN(TRIAN_DATASET_FILE, VALIDATION_DATASET_FILE, MODEL_PTH, File_sheet, num=None, numclass=None):
     if numclass is not None:
         File_sheet = File_sheet + "_" + str(numclass)
@@ -196,7 +193,7 @@ def General_Train_Validate_CNN(TRIAN_DATASET_FILE, VALIDATION_DATASET_FILE, MODE
     valid_dataloader = create_data_loader(valid_data, BATCH_SIZE)
     
     # set the model
-    model = m6_res_general
+    model = m6_res_general_2
     model.apply(init_weights)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') # begin from #0 gpu
     model = model.to(device)

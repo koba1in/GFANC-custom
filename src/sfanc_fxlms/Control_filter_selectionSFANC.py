@@ -1,10 +1,8 @@
-import torch
-import os
-import numpy as np
-from torch import nn
-import scipy.signal as signal
 
-from M5_Network import m6_res
+import numpy as np
+import torch
+from gfanc.M5_Network import m6_res
+from scipy import signal
 
 
 #-------------------------------------------------------------
@@ -58,7 +56,7 @@ def Generating_boardband_noise_wavefrom_tensor(Wc_F, Seconds, fs):
 #-------------------------------------------------------------
 # Class : Control_filter_Index_predictor
 #-------------------------------------------------------------
-class Control_filter_Index_predictor():
+class Control_filter_Index_predictor:
     
     def __init__(self, MODEL_PATH, device, fs):
         model = m6_res

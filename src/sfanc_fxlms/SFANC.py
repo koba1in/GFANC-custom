@@ -1,16 +1,12 @@
-import torch
-import numpy as np 
-import torch.nn as nn
-import torch.optim as optim
-import scipy.signal as signal
 import scipy.io as sio
+import torch
 
 
 #----------------------------------------------------------------
 # Function: SFANC_FxNLMS
 # Description: Using FxNLMS to optimize the control filter, the initial weights come from SFANC
 #----------------------------------------------------------------
-class SFANC_FxNLMS():
+class SFANC_FxNLMS:
     def __init__(self, MAT_FILE, fs):
         self.Wc = self.Load_Pretrained_filters_to_tensor(MAT_FILE) # torch.Size([15, 1024])
         Len = self.Wc.shape[1]
