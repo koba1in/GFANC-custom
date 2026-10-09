@@ -77,51 +77,51 @@ def Generating_boardband_noise_wavefrom_tensor(Wc_F, Seconds, fs):
     return torch.from_numpy(yout).type(torch.float).unsqueeze(0)
 
 
-class NumpyFxLMS:
+# class NumpyFxLMS:
     
-    def __init__(self, Len):
+#     def __init__(self, Len):
         
-        self.Wc = np.zeros((1, Len), dtype=np.float64) # initial coefficients of filter
-        self.Xd = np.zeros((1, Len), dtype=np.float64)
+#         self.Wc = np.zeros((1, Len), dtype=np.float64) # initial coefficients of filter
+#         self.Xd = np.zeros((1, Len), dtype=np.float64)
     
-    def feedforward(self, Xf): # fixed reference signal passes the control filter to output the control signal
-        self.Xd = np.roll(self.Xd, shift=1, axis=1) # roll the tensor along the given dimension
-        self.Xd[0,0] = Xf # Xf: reference signal
-        yt = self.Wc @ self.Xd.T
-        return yt
+#     def feedforward(self, Xf): # fixed reference signal passes the control filter to output the control signal
+#         self.Xd = np.roll(self.Xd, shift=1, axis=1) # roll the tensor along the given dimension
+#         self.Xd[0,0] = Xf # Xf: reference signal
+#         yt = self.Wc @ self.Xd.T
+#         return yt
     
-    def LossFunction(self, y, d):
-        e = d-y
-        return e**2, e
+#     def LossFunction(self, y, d):
+#         e = d-y
+#         return e**2, e
     
-    def step(self, e, stepsize):
-        self.Wc += stepsize * e.item() * self.Xd
+#     def step(self, e, stepsize):
+#         self.Wc += stepsize * e.item() * self.Xd
         
-    def _get_coeff_(self):
-        return self.Wc
+#     def _get_coeff_(self):
+#         return self.Wc
 
-#------------------------------------------------------------------------------
-# Function: train_fxlms_algorithm()
-#------------------------------------------------------------------------------
-def train_numpy_fxlms_algorithm(NumpyModel, Ref, Disturbance, Stepsize=0.00000005): 
+# #------------------------------------------------------------------------------
+# # Function: train_fxlms_algorithm()
+# #------------------------------------------------------------------------------
+# def train_numpy_fxlms_algorithm(NumpyModel, Ref, Disturbance, Stepsize=0.00000005): 
 
-    # bar = progressbar.ProgressBar(maxval=2*Disturbance.shape[0], \
-    #     widgets = [progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
+#     # bar = progressbar.ProgressBar(maxval=2*Disturbance.shape[0], \
+#     #     widgets = [progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
     
-    # bar.start()
-    Erro_signal = []
-    len_data = Disturbance.shape[0]
-    for itera in range(len_data):
-        # Feedfoward
-        xin = Ref[itera]
-        dis = Disturbance[itera]
-        y = NumpyModel.feedforward(xin)
-        loss,e = NumpyModel.LossFunction(y, dis)
-        NumpyModel.step(e, Stepsize)
-        # Progress shown
-        # bar.update(2*itera+1)
+#     # bar.start()
+#     Erro_signal = []
+#     len_data = Disturbance.shape[0]
+#     for itera in range(len_data):
+#         # Feedfoward
+#         xin = Ref[itera]
+#         dis = Disturbance[itera]
+#         y = NumpyModel.feedforward(xin)
+#         loss,e = NumpyModel.LossFunction(y, dis)
+#         NumpyModel.step(e, Stepsize)
+#         # Progress shown
+#         # bar.update(2*itera+1)
             
-        Erro_signal.append(e.item())
+#         Erro_signal.append(e.item())
         
         # Progress shown 
         # bar.update(2*itera+2)
@@ -183,88 +183,88 @@ def train_numpy_fxlms_algorithm(NumpyModel, Ref, Disturbance, Stepsize=0.0000000
 
 
 
-class SuperFastFxLMS:
-    def __init__(self, Len, sec_path, sec_path_hat=None, epsilon=1e-8):
-        if Len <= 0:
-            raise ValueError("Len must be positive")
+# class SuperFastFxLMS:
+#     def __init__(self, Len, sec_path, sec_path_hat=None, epsilon=1e-8):
+#         if Len <= 0:
+#             raise ValueError("Len must be positive")
 
-        self.Len = Len
-        self.Wc = np.zeros(Len, dtype=np.float64)
-        self.Xd = np.zeros(Len, dtype=np.float64)   # 基準信号の履歴
-        self.Xf = np.zeros(Len, dtype=np.float64)   # filtered-x の履歴
-        self.head = 0
-        self.epsilon = epsilon
+#         self.Len = Len
+#         self.Wc = np.zeros(Len, dtype=np.float64)
+#         self.Xd = np.zeros(Len, dtype=np.float64)   # 基準信号の履歴
+#         self.Xf = np.zeros(Len, dtype=np.float64)   # filtered-x の履歴
+#         self.head = 0
+#         self.epsilon = epsilon
 
-        self.sec_path = np.asarray(sec_path, dtype=np.float64).flatten()
-        self.sec_path_hat = np.asarray(
-            sec_path if sec_path_hat is None else sec_path_hat,
-            dtype=np.float64,
-        ).flatten()
+#         self.sec_path = np.asarray(sec_path, dtype=np.float64).flatten()
+#         self.sec_path_hat = np.asarray(
+#             sec_path if sec_path_hat is None else sec_path_hat,
+#             dtype=np.float64,
+#         ).flatten()
 
-        # 実際の二次経路と、その推定モデルのフィルタ状態
-        self._sec_zi = np.zeros(max(len(self.sec_path) - 1, 0))
-        self._hat_zi = np.zeros(max(len(self.sec_path_hat) - 1, 0))
+#         # 実際の二次経路と、その推定モデルのフィルタ状態
+#         self._sec_zi = np.zeros(max(len(self.sec_path) - 1, 0))
+#         self._hat_zi = np.zeros(max(len(self.sec_path_hat) - 1, 0))
 
-        self._last_y = 0.0
-        self._last_xf_power = 0.0
+#         self._last_y = 0.0
+#         self._last_xf_power = 0.0
 
-    def _push(self, buffer, value):
-        self.head = (self.head - 1) % self.Len
-        buffer[self.head] = value
+#     def _push(self, buffer, value):
+#         self.head = (self.head - 1) % self.Len
+#         buffer[self.head] = value
 
-    def _dot_history(self, coeffs, history):
-        split = self.Len - self.head
-        return (
-            np.dot(coeffs[:split], history[self.head:])
-            + np.dot(coeffs[split:], history[:self.head])
-        )
+#     def _dot_history(self, coeffs, history):
+#         split = self.Len - self.head
+#         return (
+#             np.dot(coeffs[:split], history[self.head:])
+#             + np.dot(coeffs[split:], history[:self.head])
+#         )
 
-    def feedforward(self, x):
-        """基準入力を受け、二次経路通過後の制御音を返す。"""
-        self._push(self.Xd, x)
+#     def feedforward(self, x):
+#         """基準入力を受け、二次経路通過後の制御音を返す。"""
+#         self._push(self.Xd, x)
 
-        # 制御フィルタの出力。適応フィルタには未フィルタの x を入力。
-        self._last_y = self._dot_history(self.Wc, self.Xd)
+#         # 制御フィルタの出力。適応フィルタには未フィルタの x を入力。
+#         self._last_y = self._dot_history(self.Wc, self.Xd)
 
-        # filtered-x を作り、係数更新用履歴に保存する。
-        xf_arr, self._hat_zi = signal.lfilter(
-            self.sec_path_hat, [1.0], [x], zi=self._hat_zi
-        )
-        xf = xf_arr[0]
-        self._push(self.Xf, xf)
-        self._last_xf_power = float(np.dot(self.Xf, self.Xf))
+#         # filtered-x を作り、係数更新用履歴に保存する。
+#         xf_arr, self._hat_zi = signal.lfilter(
+#             self.sec_path_hat, [1.0], [x], zi=self._hat_zi
+#         )
+#         xf = xf_arr[0]
+#         self._push(self.Xf, xf)
+#         self._last_xf_power = float(np.dot(self.Xf, self.Xf))
 
-        # 制御出力が実際の二次経路を通った信号を返す。
-        y_sec_arr, self._sec_zi = signal.lfilter(
-            self.sec_path, [1.0], [self._last_y], zi=self._sec_zi
-        )
-        return y_sec_arr[0]
+#         # 制御出力が実際の二次経路を通った信号を返す。
+#         y_sec_arr, self._sec_zi = signal.lfilter(
+#             self.sec_path, [1.0], [self._last_y], zi=self._sec_zi
+#         )
+#         return y_sec_arr[0]
 
-    def LossFunction(self, y, d):
-        e = d - y
-        return e**2, e
+#     def LossFunction(self, y, d):
+#         e = d - y
+#         return e**2, e
 
-    def step(self, e, stepsize):
-        # NLMS 更新。係数には filtered-x の履歴を使う。
-        mu = stepsize / (self.epsilon + self._last_xf_power)
-        split = self.Len - self.head
-        self.Wc[:split] += mu * e * self.Xf[self.head:]
-        self.Wc[split:] += mu * e * self.Xf[:self.head]
+#     def step(self, e, stepsize):
+#         # NLMS 更新。係数には filtered-x の履歴を使う。
+#         mu = stepsize / (self.epsilon + self._last_xf_power)
+#         split = self.Len - self.head
+#         self.Wc[:split] += mu * e * self.Xf[self.head:]
+#         self.Wc[split:] += mu * e * self.Xf[:self.head]
 
 
-def train_fast_lms_algorithm(Model, Ref, Disturbance, Stepsize=0.00000005):
-    ref_np = np.asarray(Ref, dtype=np.float64).flatten()
-    dist_np = np.asarray(Disturbance, dtype=np.float64).flatten()
+# def train_fast_lms_algorithm(Model, Ref, Disturbance, Stepsize=0.00000005):
+#     ref_np = np.asarray(Ref, dtype=np.float64).flatten()
+#     dist_np = np.asarray(Disturbance, dtype=np.float64).flatten()
 
-    if ref_np.size != dist_np.size:
-        raise ValueError("Ref and Disturbance must have the same length")
+#     if ref_np.size != dist_np.size:
+#         raise ValueError("Ref and Disturbance must have the same length")
 
-    error_signal = np.zeros(ref_np.size, dtype=np.float64)
+#     error_signal = np.zeros(ref_np.size, dtype=np.float64)
 
-    for i, (x, d) in enumerate(zip(ref_np, dist_np)):
-        y_sec = Model.feedforward(x)
-        _, e = Model.LossFunction(y_sec, d)
-        Model.step(e, Stepsize)
-        error_signal[i] = e
+#     for i, (x, d) in enumerate(zip(ref_np, dist_np)):
+#         y_sec = Model.feedforward(x)
+#         _, e = Model.LossFunction(y_sec, d)
+#         Model.step(e, Stepsize)
+#         error_signal[i] = e
 
-    return error_signal.tolist()
+#     return error_signal.tolist()

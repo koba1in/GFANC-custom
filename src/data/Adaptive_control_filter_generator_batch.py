@@ -69,8 +69,8 @@ def train_adaptive_gain_batch(model, filter_ref, Disturbance, device):
     Returns:
         The error signal of the adaptive gatin training result.
     """
-    filter_ref = filter_ref.to(device)
-    Disturbance = Disturbance.to(device)
+    filter_ref = filter_ref.to(device, non_blocking=True)
+    Disturbance = Disturbance.to(device, non_blocking=True)
     Len_data = Disturbance.shape[1]
     
     bar = progressbar.ProgressBar(maxval=Len_data, widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])

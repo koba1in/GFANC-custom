@@ -18,8 +18,8 @@ from data.Disturbance_generation import Disturbance_generation_from_real_noise
 # Save hard labels
 
 
-def create_data_loader(train_data, batch_size):
-    train_dataloader = DataLoader(train_data, batch_size)
+def create_data_loader(train_data, batch_size, num_workers):
+    train_dataloader = DataLoader(train_data, batch_size, shuffle=False, num_workers=num_workers, pin_memory=True)
     return train_dataloader
 
 
@@ -96,7 +96,7 @@ class NoiseDataset(Dataset):
 # Label noise dataset using the 15 pre-trained sub filters
 class Automatic_label():
     
-    def __init__(self, sufix, folder_path, path_mat, Index_file, threshold, folder="Pz and Sz", subfolder="Dongyuan", Pri_path_file_name="Primary_path.mat", Sec_path_file_name="Secondary_path.mat", **kwargs):
+    def __init__(self, sufix, folder_path, path_mat, Index_file, threshold, folder="Pz and Sz", subfolder="Dongyuan", Pri_path_file_name="Primary_path.mat", Sec_path_file_name="Secondary_path.mat", BATCH_SIZE=1000, num_workers=1, **kwargs):
         '''
         Parameters:
             param1 - folder_path: the dirctory of the dataset 
@@ -104,7 +104,8 @@ class Automatic_label():
             param3 - Index_file_name: the output file name 
         '''
         fs = 16000
-        self.BATCH_SIZE = 1000 # !!! batch_size
+        self.BATCH_SIZE = BATCH_SIZE # !!! batch_size
+        self.num_workers = num_workers
         self.fs = fs
         self.sufix = sufix
         self.folder = Path(folder_path)
@@ -123,14 +124,14 @@ class Automatic_label():
         bar.start()
         
         train_data = NoiseDataset(self.folder, self.sufix, self.Pri_path, self.Sec_path)
-        train_dataloader = create_data_loader(train_data, self.BATCH_SIZE)
+        train_dataloader = create_data_loader(train_data, self.BATCH_SIZE, self.num_workers)
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         print(f'<<===This program used {device}====>>')
 
         for filenames, Fx, Dis in train_dataloader:
-            Generator = adaptive_control_filter_batch(self.sub_filters_T, Batch_size=self.BATCH_SIZE, muw=0.001, device=device) # !!! step size
+            Generator = adaptive_control_filter_batch(self.sub_filters_T, Batch_size=Fx.size(0), muw=0.001, device=device) # !!! step size
             error = train_adaptive_gain_batch(Generator, Fx, Dis, device=device)
             plt.plot(error)
             plt.title('The residual error of a batch')

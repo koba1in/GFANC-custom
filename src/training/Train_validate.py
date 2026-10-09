@@ -90,7 +90,7 @@ def train(model, data_loader, eva_data_loader, epochs, device, MODEL_PTH=None):
         if acc_validate > acc_max:
             acc_train_max, acc_max = acc_train, acc_validate
             torch.save(model.state_dict(), MODEL_PTH)
-            print(bcolors.OKCYAN+ "Trained feed forward net saved at " + MODEL_PTH + bcolors.ENDC)   
+            print(bcolors.OKCYAN+ "Trained feed forward net saved at " + str(MODEL_PTH) + bcolors.ENDC)   
         print("----------------------------------")
     print("Finished trainning")
     return acc_train_max, acc_max, train_loss_epochs, validate_loss_epochs
@@ -157,7 +157,7 @@ def general_train(model, data_loader, eva_data_loader, epochs, device, MODEL_PTH
         if acc_validate > acc_max:
             acc_train_max, acc_max = acc_train, acc_validate
             torch.save(model.state_dict(), MODEL_PTH)
-            print(bcolors.OKCYAN+ "Trained feed forward net saved at " + MODEL_PTH + bcolors.ENDC)   
+            print(bcolors.OKCYAN+ "Trained feed forward net saved at " + str(MODEL_PTH) + bcolors.ENDC)   
         print("----------------------------------")
     print("Finished trainning")
     return acc_train_max, acc_max, train_loss_epochs, validate_loss_epochs

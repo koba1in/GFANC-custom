@@ -76,106 +76,106 @@ def Generating_boardband_noise_wavefrom_tensor(Wc_F, Seconds, fs):
     # return a tensor of [1 x sample rate]
     return torch.from_numpy(yout).type(torch.float).unsqueeze(0)
 
-class SuperFastLMS:
-    def __init__(self, Len):
-        self.Len = Len
-        self.Wc = np.zeros(Len, dtype=np.float64)  
-        self.Xd = np.zeros(Len, dtype=np.float64)  
-        self.head = 0  
+# class SuperFastLMS:
+#     def __init__(self, Len):
+#         self.Len = Len
+#         self.Wc = np.zeros(Len, dtype=np.float64)  
+#         self.Xd = np.zeros(Len, dtype=np.float64)  
+#         self.head = 0  
     
-    def feedforward(self, Xf):
+#     def feedforward(self, Xf):
 
-        self.head = (self.head - 1) % self.Len
-        self.Xd[self.head] = Xf
+#         self.head = (self.head - 1) % self.Len
+#         self.Xd[self.head] = Xf
         
-        yt = np.dot(self.Wc[:self.Len - self.head], self.Xd[self.head:]) + \
-             np.dot(self.Wc[self.Len - self.head:], self.Xd[:self.head])
-        return yt
+#         yt = np.dot(self.Wc[:self.Len - self.head], self.Xd[self.head:]) + \
+#              np.dot(self.Wc[self.Len - self.head:], self.Xd[:self.head])
+#         return yt
     
-    def LossFunction(self, y, d):
-        e = d - y
-        return e**2, e
+#     def LossFunction(self, y, d):
+#         e = d - y
+#         return e**2, e
     
-    def step(self, e, stepsize):
-        self.Wc[:self.Len - self.head] += stepsize * e * self.Xd[self.head:]
-        self.Wc[self.Len - self.head:] += stepsize * e * self.Xd[:self.head]
+#     def step(self, e, stepsize):
+#         self.Wc[:self.Len - self.head] += stepsize * e * self.Xd[self.head:]
+#         self.Wc[self.Len - self.head:] += stepsize * e * self.Xd[:self.head]
     
-    def _get_coeff_(self):
-        return self.Wc
+#     def _get_coeff_(self):
+#         return self.Wc
 
-class SuperFastNLMS(SuperFastLMS):
-    def __init__(self, Len):
-        super().__init__(Len)
+# class SuperFastNLMS(SuperFastLMS):
+#     def __init__(self, Len):
+#         super().__init__(Len)
 
-    def step(self, e, stepsize):
-        self.Wc[:self.Len - self.head] += stepsize / (np.finfo(float).eps + np.sum(np.square(self.Xd))) * e * self.Xd[self.head:]
-        self.Wc[self.Len - self.head:] += stepsize / (np.finfo(float).eps + np.sum(np.square(self.Xd))) * e * self.Xd[:self.head]
-#------------------------------------------------------------------------------
-# 実行関数
-#------------------------------------------------------------------------------
-def train_fast_lms_algorithm(Model, Ref, Disturbance, Stepsize=0.00000005): 
+#     def step(self, e, stepsize):
+#         self.Wc[:self.Len - self.head] += stepsize / (np.finfo(float).eps + np.sum(np.square(self.Xd))) * e * self.Xd[self.head:]
+#         self.Wc[self.Len - self.head:] += stepsize / (np.finfo(float).eps + np.sum(np.square(self.Xd))) * e * self.Xd[:self.head]
+# #------------------------------------------------------------------------------
+# # 実行関数
+# #------------------------------------------------------------------------------
+# def train_fast_lms_algorithm(Model, Ref, Disturbance, Stepsize=0.00000005): 
 
-    ref_np = np.asarray(Ref, dtype=np.float64).flatten()
-    dist_np = np.asarray(Disturbance, dtype=np.float64).flatten()
+#     ref_np = np.asarray(Ref, dtype=np.float64).flatten()
+#     dist_np = np.asarray(Disturbance, dtype=np.float64).flatten()
     
-    len_data = dist_np.shape[0]
-    Erro_signal = np.zeros(len_data, dtype=np.float64) 
+#     len_data = dist_np.shape[0]
+#     Erro_signal = np.zeros(len_data, dtype=np.float64) 
 
-    for itera in range(len_data):
-        xin = ref_np[itera]
-        dis = dist_np[itera]
+#     for itera in range(len_data):
+#         xin = ref_np[itera]
+#         dis = dist_np[itera]
         
-        y = Model.feedforward(xin)
-        _, e = Model.LossFunction(y, dis)
-        Model.step(e, Stepsize)
+#         y = Model.feedforward(xin)
+#         _, e = Model.LossFunction(y, dis)
+#         Model.step(e, Stepsize)
         
-        Erro_signal[itera] = e
+#         Erro_signal[itera] = e
         
-    return Erro_signal.tolist()
+#     return Erro_signal.tolist()
 
 
 
-class SuperFastFxNLMS:
-    def __init__(self, Len, eps=1e-12):
-        self.Len = int(Len)
-        if self.Len <= 0:
-            raise ValueError("Len must be positive")
+# class SuperFastFxNLMS:
+#     def __init__(self, Len, eps=1e-12):
+#         self.Len = int(Len)
+#         if self.Len <= 0:
+#             raise ValueError("Len must be positive")
 
-        self.Wc = np.zeros(self.Len, dtype=np.float64)
+#         self.Wc = np.zeros(self.Len, dtype=np.float64)
 
-        # 出力計算用の元信号履歴
-        self.X = np.zeros(self.Len, dtype=np.float64)
+#         # 出力計算用の元信号履歴
+#         self.X = np.zeros(self.Len, dtype=np.float64)
 
-        # 係数更新用の filtered reference 履歴
-        self.Xf = np.zeros(self.Len, dtype=np.float64)
+#         # 係数更新用の filtered reference 履歴
+#         self.Xf = np.zeros(self.Len, dtype=np.float64)
 
-        self.head = 0
-        self.eps = float(eps)
+#         self.head = 0
+#         self.eps = float(eps)
 
-    def _push(self, history, value):
-        self.head = (self.head - 1) % self.Len
-        history[self.head] = value
+#     def _push(self, history, value):
+#         self.head = (self.head - 1) % self.Len
+#         history[self.head] = value
 
-    def _ordered(self, history):
-        """最新サンプルから過去に向かう順序で履歴を返す。"""
-        return np.concatenate((history[self.head:], history[:self.head]))
+#     def _ordered(self, history):
+#         """最新サンプルから過去に向かう順序で履歴を返す。"""
+#         return np.concatenate((history[self.head:], history[:self.head]))
 
-    def feedforward(self, x):
-        self._push(self.X, x)
-        x_history = self._ordered(self.X)
-        return float(np.dot(self.Wc, x_history))
+#     def feedforward(self, x):
+#         self._push(self.X, x)
+#         x_history = self._ordered(self.X)
+#         return float(np.dot(self.Wc, x_history))
 
-    def step(self, e, stepsize, x_filtered):
-        self.Xf[self.head] = x_filtered
-        xf_history = self._ordered(self.Xf)
+#     def step(self, e, stepsize, x_filtered):
+#         self.Xf[self.head] = x_filtered
+#         xf_history = self._ordered(self.Xf)
 
-        power = np.dot(xf_history, xf_history)
-        mu = stepsize / (self.eps + power)
+#         power = np.dot(xf_history, xf_history)
+#         mu = stepsize / (self.eps + power)
 
-        self.Wc += mu * e * xf_history
+#         self.Wc += mu * e * xf_history
 
-    def _get_coeff_(self):
-        return self.Wc
+#     def _get_coeff_(self):
+#         return self.Wc
 
 # def train_fxlms_algorithm(
 #     Model,

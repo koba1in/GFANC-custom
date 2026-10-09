@@ -46,10 +46,13 @@ def make_filter(xf, dis, num_taps):
 
 def main():
 
-    delay = 0
+    delay = 5
     print(delay)
     print(PROJECT_ROOT)
-    FILE_NAME_PATH = 'models/Pretrained_Sub_Control_filters_delay_' + str(delay) + '.mat'
+    FILTER_DIR = PROJECT_ROOT/"models"
+    mainfilter_name = "Pretrained_Main_Control_filter_delay_" + str(delay) + ".mat"
+    subfilter_name = "Pretrained_Sub_Control_filters_delay_" + str(delay) + ".mat"
+    FILE_NAME_PATH = FILTER_DIR/subfilter_name
     fs = 16000
     control_filter = Creating_Filter(Len=1024, low_cut_normal_fre=20, high_cut_normal_fre=7980, fs=fs, plot=False)
 
@@ -62,14 +65,16 @@ def main():
     # Get the filtered-x and disturbance, train the main control filter
     # Dis, Fx = Disturbance_reference_generation_from_Afilter(fs=fs, T=T, f_vector=control_filter, Pri_path=Pri_path, Sec_path=Secon_path)
     Ref, Dis, Fx = Disturbance_reference_generation_from_Afilter(fs=fs, T=T, f_vector=control_filter, Pri_path=Pri_path, Sec_path=Secon_path,)
-    Erro, Wc_main = make_filter(Fx, Dis, Len_control)
+    # Erro, Wc_main = make_filter(Fx, Dis, Len_control)
     controller = FxLMS(Len=Len_control)
     Erro = train_fxlms_algorithm(Model=controller, Ref=Fx, Disturbance=Dis, Stepsize=0.0001) # !!! train step size
     # controller = SuperFastFxNLMS(Len_control)
     # Erro = train_fxlms_algorithm(Model=controller, Ref=Ref, FilteredRef=Fx, Disturbance=Dis, Stepsize=0.001)
     print(10*np.log10(np.mean(np.square(np.array(Erro)))/np.mean(np.square(Dis.numpy()))))
     Wc_main = np.squeeze(controller._get_coeff_())
-    save_mat__(PROJECT_ROOT/'models/Pretrained_Main_Control_filter.mat', Wc_main)
+    
+    FILTER_DIR.mkdir(parents=True, exist_ok=True)
+    save_mat__(FILTER_DIR/mainfilter_name, Wc_main)
 
     # Drawing the noise reduction error of the main control filter
     # plt.title('The error signal of main control filter')
