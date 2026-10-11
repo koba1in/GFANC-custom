@@ -3,7 +3,8 @@ import progressbar
 import torch
 from scipy import signal
 from torch import optim
-
+import torch.nn.functional as F
+from common.utils import fir_filter
 
 #------------------------------------------------------------------------------
 # Class: FxLMS algorithm
@@ -56,6 +57,56 @@ def train_fxlms_algorithm(Model, Ref, Disturbance, Stepsize=0.00000005):
         optimizer.step()
         Erro_signal.append(e.item())
         
+        # Progress shown 
+        bar.update(2*itera+2)
+    bar.finish()
+    return Erro_signal
+
+class Noisy_FxLMS(FxLMS):
+    
+    def __init__(self, Len):
+        super().__init__(Len)
+        self.Wc = torch.zeros(1, Len, requires_grad=False, dtype=torch.float)
+
+    def update(self, e, fx, Stepsize):
+        # Fx: shape [1, Len] のFiltered-xベクトル
+        self.Wc += 2 * Stepsize * e.detach() * fx.flip(0).unsqueeze(0)
+
+def train_fxlms_algorithm_for_noisy_ref(Model, Ref, Disturbance, Secondary_path, filter_len, Stepsize=0.00000005): 
+    #Ref: reference signal
+    bar = progressbar.ProgressBar(maxval=2*Disturbance.shape[0], \
+        widgets = [progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
+        
+    bar.start()
+    Erro_signal = []
+    len_data = Disturbance.shape[0]
+    Fx = fir_filter(Ref, Secondary_path)
+    Fx = torch.concat([torch.zeros(filter_len - 1), Fx])
+    Y = torch.zeros(len(Secondary_path))
+    Secondary_path = Secondary_path #.flip(0)
+    for itera in range(len_data):
+        # Feedfoward
+        xin = Ref[itera]
+        dis = Disturbance[itera]
+        y = Model.feedforward(xin)
+        Y = torch.roll(Y, shifts=1, dims=0)
+        Y[0] = y
+        y_secondary = torch.dot(Y, Secondary_path)
+        loss, e = Model.LossFunction(y_secondary, dis)
+        
+        # Progress shown
+        bar.update(2*itera+1)
+        if not torch.isfinite(e).all():
+            print("non-finite e at", itera)
+        if not torch.isfinite(Fx).all():
+            print("non-finite fx at", itera)
+
+        # Backward 
+        Model.update(e, Fx[itera:itera+filter_len], Stepsize)
+        Erro_signal.append(e.item())
+        if not torch.isfinite(Model.Wc).all():
+            print("non-finite Wc after update at", itera)
+            break
         # Progress shown 
         bar.update(2*itera+2)
     bar.finish()

@@ -8,6 +8,25 @@ version = "0.1.0"
 description = "Generative fixed-filter active noise control research code"
 readme = "README.md"
 requires-python = ">=3.9"
+dependencies = [
+    "ipykernel==6.29.5",
+    "matplotlib==3.10.8",
+    "numpy==2.4.2",
+    "pandas==3.0.1",
+    "progressbar33==2.4",
+    "scipy==1.17.0",
+    "torch==2.10.0",
+    "torchaudio==2.10.0",
+    "torchcodec==0.10.0",
+    "scikit-learn==1.8.0",
+    "librosa==0.11.0",
+    "pyroomacoustics",
+]
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

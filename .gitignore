@@ -31,7 +31,9 @@ ENV/
 # Jupyter
 .ipynb_checkpoints/
 
-
+# pyproject.toml
+pyproject.toml
+=3.9
 # =========================
 # IDE / Editor
 # =========================

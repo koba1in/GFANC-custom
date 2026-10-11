@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from data.Disturbance_generation import Disturbance_reference_generation_from_Afilter, Disturbance_reference_generation_from_Afilter_with_additive_noise
 from data.DFT_Filter_Decompose import Creating_Filter, Filter_Decompose
 from common.change_condition import add_noise_to_tensor
-from fxlms.FxLMS_algorithm_v1 import FxLMS, SuperFastNLMS, train_fast_lms_algorithm, SuperFastFxNLMS, train_fxlms_algorithm
+from fxlms.FxLMS_algorithm_v1 import FxLMS, train_fxlms_algorithm
 
 PROJECT_ROOT = Path.cwd().parents[1]
 
