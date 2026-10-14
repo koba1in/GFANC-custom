@@ -46,12 +46,13 @@ def make_filter(xf, dis, num_taps):
 
 def main():
 
-    delay = 5
+    delay = 0
     print(delay)
     print(PROJECT_ROOT)
     FILTER_DIR = PROJECT_ROOT/"models"
     mainfilter_name = "Pretrained_Main_Control_filter_delay_" + str(delay) + ".mat"
     subfilter_name = "Pretrained_Sub_Control_filters_delay_" + str(delay) + ".mat"
+    subfolder = "Secondary_path_delay_" + str(delay) + "samples"
     FILE_NAME_PATH = FILTER_DIR/subfilter_name
     fs = 16000
     control_filter = Creating_Filter(Len=1024, low_cut_normal_fre=20, high_cut_normal_fre=7980, fs=fs, plot=False)
@@ -59,7 +60,6 @@ def main():
     # Configurating the pre-trained control filter parameters
     T = 30
     Len_control = 1024
-    subfolder = "Secondary_path_delay_" + str(delay) + "samples"
     # subfolder = "Dongyuan"
     Pri_path, Secon_path = loading_paths_from_MAT(folder=PROJECT_ROOT/'Pz and Sz', subfolder=subfolder, Pri_path_file_name='Primary_path.mat', Sec_path_file_name='Secondary_path.mat')
     # Get the filtered-x and disturbance, train the main control filter
