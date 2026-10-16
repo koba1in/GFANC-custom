@@ -50,7 +50,7 @@ GFANC は入力ノイズに応じてニューラルネットワークがサブ�
 
 ## 必要環境とインストール
 
-`pyproject.toml` では、パッケージ名を `DeepANC`、バージョンを `0.1.0`、Python の下限を `3.9` としています。ビルドには PEP 517 の `uv_build`（`>=0.12.19,<0.13.0`）を使います。必須依存関係は `[project.dependencies]` には定義されておらず、依存パッケージは `[project.optional-dependencies]` の `normal`、`titanx`、`dev` extras に分けて定義されています。メタデータ上の開発段階は Alpha です。`[project.urls]` テーブルはありますが、現在 URL は登録されていません。
+`pyproject.toml` では、パッケージ名を `gfanc`、バージョンを `0.1.0`、Python の下限を `3.9` としています。ビルドには PEP 517 の `uv_build`（`>=0.12.19,<0.13.0`）を使います。必須依存関係は `[project.dependencies]` には定義されておらず、依存パッケージは `[project.optional-dependencies]` の `normal`、`titanx`、`dev` extras に分けて定義されています。メタデータ上の開発段階は Alpha です。`[project.urls]` テーブルはありますが、現在 URL は登録されていません。
 
 ### uv を使う場合
 
