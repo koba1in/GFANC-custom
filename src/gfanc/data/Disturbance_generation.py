@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from numpy.core.fromnumeric import repeat 
 from scipy import signal, misc
 import torch
-from common.change_condition import add_noise_to_ndarray
+from gfanc.common.change_condition import add_noise_to_ndarray
 
 
 #-------------------------------------------------------------

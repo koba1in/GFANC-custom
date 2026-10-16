@@ -11,14 +11,14 @@ import math
 import progressbar
 from pathlib import Path
 
-from data.DataSet_construction import DatasetSheet
-from data.Adaptive_control_filter_generator_batch import adaptive_control_filter_batch, train_adaptive_gain_batch
-from data.Disturbance_generation import Disturbance_generation_from_real_noise
+from gfanc.data.DataSet_construction import DatasetSheet
+from gfanc.data.Adaptive_control_filter_generator_batch import adaptive_control_filter_batch, train_adaptive_gain_batch
+from gfanc.data.Disturbance_generation import Disturbance_generation_from_real_noise
 
 # Save hard labels
 
 
-def create_data_loader(train_data, batch_size, num_workers):
+def create_data_loader(train_data, batch_size, num_workers, ):
     train_dataloader = DataLoader(train_data, batch_size, shuffle=False, num_workers=num_workers, pin_memory=True)
     return train_dataloader
 

@@ -1,7 +1,7 @@
 
 import numpy as np
 import torch
-from gfanc.M5_Network import m6_res
+from gfanc.gfanc.M5_Network import m6_res
 from scipy import signal
 
 

@@ -2,7 +2,7 @@
 import numpy as np
 import scipy.io as sio
 import torch
-from gfanc.M5_Network import m6_res
+from gfanc.gfanc.M5_Network import m6_res
 from scipy import signal
 
 
@@ -150,7 +150,7 @@ class Control_filter_Index_predictor:
 
 
 def Control_filter_selection_pre_now(fs, MODEL_PTH, path_mat, Primary_noise, threshold):
-    device = torch.device('cuda')
+    device = torch.device('cuda' if torch.cuda.is_available() else "cpu")
     
     Pre_trained_control_filter_ID_pridector = Control_filter_Index_predictor(MODEL_PATH=MODEL_PTH, path_mat=path_mat, device=device, fs=fs, threshold=threshold)
     

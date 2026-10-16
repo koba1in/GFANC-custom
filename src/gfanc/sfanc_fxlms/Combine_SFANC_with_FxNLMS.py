@@ -16,7 +16,7 @@ class FxNLMS:
         self.Xd = torch.roll(self.Xd,1,1)
         self.Xd[0,0] = Xf 
         yt = self.Wc @ self.Xd.t()
-        power = self.Xd @ self.Xd.t() # different from FxLMS
+        power = self.Xd @ self.Xd.t() # different from gfanc.fxlms
         return yt, power
     
     def LossFunction(self, y, d, power):

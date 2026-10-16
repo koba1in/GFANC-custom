@@ -4,7 +4,7 @@ import torch
 from scipy import signal
 from torch import optim
 import torch.nn.functional as F
-from common.utils import fir_filter
+from gfanc.common.utils import fir_filter
 
 #------------------------------------------------------------------------------
 # Class: FxLMS algorithm

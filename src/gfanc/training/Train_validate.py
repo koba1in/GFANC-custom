@@ -4,9 +4,9 @@ import torch
 from torch import nn, optim
 from torch.utils.data import DataLoader
 
-from gfanc.M5_Network import m6_res, m6_res_general_2
-from training.Bcolors import bcolors
-from training.MyDataLoader import MyNoiseDataset
+from gfanc.gfanc.M5_Network import m6_res, m6_res_general_2
+from gfanc.training.Bcolors import bcolors
+from gfanc.training.MyDataLoader import MyNoiseDataset
 
 # BATCH_SIZE = 250
 EPOCHS = 50
@@ -166,7 +166,7 @@ def general_train(model, data_loader, eva_data_loader, epochs, device, MODEL_PTH
 #----------------------------------------------------------------------------------------
 # Function : Training and validating 1D-CNN
 #----------------------------------------------------------------------------------------
-from training.MyDataLoader import GenMyNoiseDataset
+from gfanc.training.MyDataLoader import GenMyNoiseDataset
 
 
 def General_Train_Validate_CNN(TRIAN_DATASET_FILE, VALIDATION_DATASET_FILE, MODEL_PTH, File_sheet, num=None, numclass=None):

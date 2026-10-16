@@ -6,13 +6,13 @@ from scipy.io import savemat
 import scipy.io as sio
 import torch
 import torch.nn.functional as F
+from pyprojroot import here
+from gfanc.data.Disturbance_generation import Disturbance_reference_generation_from_Afilter, Disturbance_reference_generation_from_Afilter_with_additive_noise
+from gfanc.data.DFT_Filter_Decompose import Creating_Filter, Filter_Decompose
+from gfanc.common.change_condition import add_noise_to_tensor
+from gfanc.fxlms.FxLMS_algorithm_v1 import FxLMS, train_fxlms_algorithm
 
-from data.Disturbance_generation import Disturbance_reference_generation_from_Afilter, Disturbance_reference_generation_from_Afilter_with_additive_noise
-from data.DFT_Filter_Decompose import Creating_Filter, Filter_Decompose
-from common.change_condition import add_noise_to_tensor
-from fxlms.FxLMS_algorithm_v1 import FxLMS, train_fxlms_algorithm
-
-PROJECT_ROOT = Path.cwd().parents[1]
+PROJECT_ROOT = here()
 
 def save_mat__(FILE_NAME_PATH, Wc):
     mdict = {'Wc_v': Wc}
@@ -46,13 +46,18 @@ def make_filter(xf, dis, num_taps):
 
 def main():
 
-    delay = 0
+    delay = -25
     print(delay)
     print(PROJECT_ROOT)
     FILTER_DIR = PROJECT_ROOT/"models"
-    mainfilter_name = "Pretrained_Main_Control_filter_delay_" + str(delay) + ".mat"
-    subfilter_name = "Pretrained_Sub_Control_filters_delay_" + str(delay) + ".mat"
-    subfolder = "Secondary_path_delay_" + str(delay) + "samples"
+    # custom
+    # mainfilter_name = "Pretrained_Main_Control_filter_delay_" + str(delay) + ".mat"
+    # subfilter_name = "Pretrained_Sub_Control_filters_delay_" + str(delay) + ".mat"
+    # subfolder = "Secondary_path_delay_" + str(delay) + "samples"
+    # default
+    mainfilter_name = "Pretrained_Main_Control_filter.mat"
+    subfilter_name = "Pretrained_Sub_Control_filters.mat"
+    subfolder = "Dongyuan"
     FILE_NAME_PATH = FILTER_DIR/subfilter_name
     fs = 16000
     control_filter = Creating_Filter(Len=1024, low_cut_normal_fre=20, high_cut_normal_fre=7980, fs=fs, plot=False)

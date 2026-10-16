@@ -1,6 +1,6 @@
 import torch
-from gfanc.M5_Network import m6_res, m6_res_general_2
-from training.MyDataLoader import MyNoiseDataset, MyNoiseDataset1
+from gfanc.gfanc.M5_Network import m6_res, m6_res_general_2
+from gfanc.training.MyDataLoader import MyNoiseDataset, MyNoiseDataset1
 from torch.utils.data import DataLoader
 
 BATCH_SIZE = 250
