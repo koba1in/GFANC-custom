@@ -46,18 +46,20 @@ def make_filter(xf, dis, num_taps):
 
 def main():
 
-    delay = -25
-    print(delay)
-    print(PROJECT_ROOT)
     FILTER_DIR = PROJECT_ROOT/"models"
+
     # custom
+    # delay = -25
+    # print(delay)
     # mainfilter_name = "Pretrained_Main_Control_filter_delay_" + str(delay) + ".mat"
     # subfilter_name = "Pretrained_Sub_Control_filters_delay_" + str(delay) + ".mat"
     # subfolder = "Secondary_path_delay_" + str(delay) + "samples"
+
     # default
     mainfilter_name = "Pretrained_Main_Control_filter.mat"
     subfilter_name = "Pretrained_Sub_Control_filters.mat"
     subfolder = "Dongyuan"
+    
     FILE_NAME_PATH = FILTER_DIR/subfilter_name
     fs = 16000
     control_filter = Creating_Filter(Len=1024, low_cut_normal_fre=20, high_cut_normal_fre=7980, fs=fs, plot=False)
